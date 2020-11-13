@@ -12,12 +12,12 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
-/** Event emitted by EditText native view when it receives focus. */
-/* package */ class ReactTextInputFocusEvent extends Event<ReactTextInputFocusEvent> {
+/** Event emitted a native view when it loses focus. */
+public class ReactBlurEvent extends Event<ReactBlurEvent> {
 
-  private static final String EVENT_NAME = "topFocus";
+  private static final String EVENT_NAME = "topBlur";
 
-  public ReactTextInputFocusEvent(int viewId) {
+  public ReactBlurEvent(int viewId) {
     super(viewId);
   }
 
