@@ -106,6 +106,16 @@ type Props = $ReadOnly<{|
   onPressOut?: ?(event: PressEvent) => void,
 
   /**
+   * Called after the element loses focus.
+   */
+  onBlur?: ?(event: BlurEvent) => mixed,
+
+  /**
+   * Called after the element is focused.
+   */
+  onFocus?: ?(event: FocusEvent) => mixed,
+
+  /**
    * Either view styles or a function that receives a boolean reflecting whether
    * the component is currently pressed and returns view styles.
    */
@@ -154,6 +164,8 @@ function Pressable(props: Props, forwardedRef): React.Node {
     onPress,
     onPressIn,
     onPressOut,
+    onBlur,
+    onFocus,
     pressRetentionOffset,
     style,
     testOnly_pressed,
@@ -163,6 +175,20 @@ function Pressable(props: Props, forwardedRef): React.Node {
 
   const viewRef = useRef<React.ElementRef<typeof View> | null>(null);
   useImperativeHandle(forwardedRef, () => viewRef.current);
+
+  const _onBlur = (event: BlurEvent) => {
+    TextInputState.blurInput(viewRef.current);
+    if (props.onBlur) {
+      props.onBlur(event);
+    }
+  };
+
+  const _onFocus = (event: FocusEvent) => {
+    TextInputState.focusInput(viewRef.current);
+    if (props.onFocus) {
+      props.onFocus(event);
+    }
+  };
 
   const android_rippleConfig = useAndroidRippleForView(android_ripple, viewRef);
 
@@ -207,6 +233,8 @@ function Pressable(props: Props, forwardedRef): React.Node {
           onPressOut(event);
         }
       },
+      onBlur,
+      onFocus,
     }),
     [
       android_disableSound,
@@ -218,6 +246,8 @@ function Pressable(props: Props, forwardedRef): React.Node {
       onPress,
       onPressIn,
       onPressOut,
+      onBlur,
+      onFocus,
       pressRetentionOffset,
       setPressed,
       unstable_pressDelay,
@@ -229,6 +259,8 @@ function Pressable(props: Props, forwardedRef): React.Node {
     <View
       {...restPropsWithDefaults}
       {...eventHandlers}
+      onBlur={_onBlur}
+      onFocus={_onFocus}
       ref={viewRef}
       style={typeof style === 'function' ? style({pressed}) : style}
       collapsable={false}>

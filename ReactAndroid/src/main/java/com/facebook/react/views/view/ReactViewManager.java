@@ -254,6 +254,25 @@ public class ReactViewManager extends ReactClippingViewManager<ReactViewGroup> {
     }
   }
 
+@Override
+  protected void addEventEmitters(final ThemedReactContext reactContext, final ReactViewGroup view) {
+    view.setOnFocusChangeListener(
+        new View.OnFocusChangeListener() {
+          public void onFocusChange(View v, boolean hasFocus) {
+            EventDispatcher eventDispatcher = getEventDispatcher(reactContext, view);
+            if (hasFocus) {
+              eventDispatcher.dispatchEvent(new ReactTextInputFocusEvent(view.getId()));
+            } else {
+              eventDispatcher.dispatchEvent(new ReactTextInputBlurEvent(view.getId()));
+
+              eventDispatcher.dispatchEvent(
+                  new ReactTextInputEndEditingEvent(
+                      view.getId(), view.getText().toString()));
+            }
+          }
+        });
+  }
+
   @ReactProp(name = ViewProps.OVERFLOW)
   public void setOverflow(ReactViewGroup view, String overflow) {
     view.setOverflow(overflow);
